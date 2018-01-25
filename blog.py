@@ -20,20 +20,24 @@ class Posts(Resource):
 		return jsonify(result)
 
 class Post(Resource):
-	def post(post_id, title, body):
+	def post(self):
+		blob = request.get_json(force=True)
+		title = blob['title']
+		body = blob['body']
 		conn = db_connect.connect()
-		query = conn.execute("insert into posts (post_id, title, body) values (?,?,?)", (post_id, title, body)) 
-		conn.commit()
-		conn.close()
+		query = conn.execute("insert into posts (title, body) values (?,?)", (title, body)) 
+#		return jsonify(request)
+		return blob
 
-	#	return jsonify(result)
-
+#@app.route('/post', methods=['POST'])
+#@app.route('/posts', methods=['GET'])
 api.add_resource(Posts, '/posts') # Route_1
-#api.add_resource(Post, '/post') # Route_2
+api.add_resource(Post, '/post') # Route_2
 
 @app.errorhandler(404)
 def not_found(error):
 	return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-	 app.run()
+#	 app.run()
+	 app.run(host='172.31.87.75')
