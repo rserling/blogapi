@@ -3,7 +3,9 @@ from flask_restful import Resource, Api
 from flask_jsonpify import jsonify
 from json import dumps
 from sqlalchemy import create_engine
-# CREATE TABLE posts (post_id integer primary key asc autoincrement, title string, body string);
+# post_id
+# title
+# body
 
 db_connect = create_engine('sqlite:///blog.db')
 app = Flask(__name__)
@@ -13,10 +15,18 @@ class Posts(Resource):
 	def get(self):
 		conn = db_connect.connect()
 		query = conn.execute("select * from posts")
-#		return query.cursor.fetchall()
-		result = {'posts': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
+		result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
 		conn.close()
 		return jsonify(result)
+
+class Post(Resource):
+	def post(post_id, title, body):
+		conn = db_connect.connect()
+		query = conn.execute("insert into posts (post_id, title, body) values (?,?,?)", (post_id, title, body)) 
+		conn.commit()
+		conn.close()
+
+	#	return jsonify(result)
 
 api.add_resource(Posts, '/posts') # Route_1
 #api.add_resource(Post, '/post') # Route_2
