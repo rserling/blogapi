@@ -1,3 +1,6 @@
+####
+## see EOF where you have to set the listening IP, that's the only edit 
+
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api
 from flask_jsonpify import jsonify
@@ -26,11 +29,10 @@ class Post(Resource):
 		body = blob['body']
 		conn = db_connect.connect()
 		query = conn.execute("insert into posts (title, body) values (?,?)", (title, body)) 
-#		return jsonify(request)
 		return blob
 
-#@app.route('/post', methods=['POST'])
-#@app.route('/posts', methods=['GET'])
+@app.route('/post', methods=['POST'])
+@app.route('/posts', methods=['GET'])
 api.add_resource(Posts, '/posts') # Route_1
 api.add_resource(Post, '/post') # Route_2
 
@@ -39,5 +41,6 @@ def not_found(error):
 	return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-#	 app.run()
-	 app.run(host='192.168.0.33')
+#   app.run()
+##  adjust for the host you're on or proxying thru
+#   app.run(host='192.168.0.33')
